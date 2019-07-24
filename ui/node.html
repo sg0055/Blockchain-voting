@@ -1,1 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blockchain Management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4"
+        crossorigin="anonymous">
+    <style>
+        .lds-ring {
+            display: inline-block;
+            position: relative;
+            width: 64px;
+            height: 64px;
+        }
+
+        .lds-ring div {
+            box-sizing: border-box;
+            display: block;
+            position: absolute;
+            width: 51px;
+            height: 51px;
+            margin: 6px;
+            border: 6px solid #fa923f;
+            border-radius: 50%;
+            animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+            border-color: #fa923f transparent transparent transparent;
+        }
+
+        .lds-ring div:nth-child(1) {
+            animation-delay: -0.45s;
+        }
+
+        .lds-ring div:nth-child(2) {
+            animation-delay: -0.3s;
+        }
+
+        .lds-ring div:nth-child(3) {
+            animation-delay: -0.15s;
+        }
+
+        @keyframes lds-ring {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="EVM">
+        <div class="container">
+            <div class="row mb-3">
+                <div class="col">
+                    <h1>Electronic Voting Machine</h1>
+                </div>
+            </div>
+            <div v-if="error" class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            <div v-if="success" class="alert alert-success" role="alert">
+                {{ success }}
+            </div>
+            
+            <hr>
+            
+            <div class="row">
+                <div class="col">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" :class="{active: view === 'chain'}" href="#" @click="view = 'chain'">Blockchain</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" :class="{active: view === 'vote'}" href="#" @click="view = 'vote'">Vote</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" :class="{active: view === 'result'}" href="#" @click="view = 'result'">Result</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div v-if="view === 'chain'" class="row my-3" >
+                <div class="col">
+                    <button class="btn btn-primary" @click="onLoadData">Load Blockchain</button>
+            
+                </div>
+            </div>
+            <div v-if="view === 'vote'" class="row my-5">
+                <div class="col">
+                        <button class="btn btn-primary" @click="Cand1">
+                            Cand1
+                        </button>
+                        
+                        <button class="btn btn-primary" @click="Cand2">
+                            Cand2
+                        </button>
+                        <button class="btn btn-primary" @click="Cand3">
+                            Cand3
+                        </button>
+                        <button class="btn btn-primary" @click="Cand4">
+                            Cand4
+                        </button>
+                    </div></div>
+                    <div v-if="view === 'result'" class="row my-5">
+                        <div class="col">
+                                <button class="btn btn-primary" @click="ONresult">
+                                    Start Counting
+                                </button></div>
+                            </div>
+                                  
+            <div v-if="!relcal" class="accordion">
+                    <div class="card">
+                            <div v-if="view === 'result'" class="card-header">
+                                    <h5 class="mb-0">
+                                            <div class="card-divider">
+                                                Candidate 1: {{results.Cand1}}
+                                            </div>
+                                                <div class="card-divider">
+                                            
+                                                Candidate 2: {{results.Cand2}}
+                                            </div>
+                                            <div class="card-divider">
+                                                    Candidate 3: {{results.Cand3}}
+                                                </div>
+                                            
+                                                <div class="card-divider">
+                                                        Candidate 4: {{results.Cand4}}
+                                                    </div>
+                                        </div>
+                                        
+                                        </h5>
+                                    
+                            </div>
+                    </div>
+            </div>                    
+            
+            <div class="row">
+                <div class="col">
+                    <div v-if="dataLoading" class="lds-ring">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    <div v-if="!dataLoading" class="accordion">
+                        <div class="card" v-for="(data, index) in loadedData">
+                            <div v-if="view === 'chain'" class="card-header">
+                                <h5 class="mb-0">
+                                    <button class="btn btn-link" type="button" @click="showElement === index ? showElement = null : showElement = index">
+                                        Block #{{ data.index }}
+                                    </button>
+                                </h5>
+                            </div>
+                            <div v-if="view === 'chain'" class="collapse" :class="{show: showElement === index}">
+                                <div class="card-body">
+                                    <p>Previous Hash: {{ data.prev_hash }}</p>
+                                    <p>EVM_ID: {{ data.evm_id }}</p>
+                                    <p>Vote: {{ data.vote }}</p>
+                                    
+                                </div>
+                            </div>
+                            
+                            
+                        </div>
+                        
+                        </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        new Vue({
+            el: '#EVM',
+            data: {
+                blockchain: [],
+                openTransactions: [],
+                results: [],
+                relcal: false,
+                wallet: null,
+                view: 'chain',
+                walletLoading: false,
+                txLoading: false,
+                dataLoading: false,
+                showElement: null,
+                error: null,
+                success: null,
+                
+            },
+            computed: {
+                loadedData: function () {
+                    if (this.view === 'chain') {
+                        return this.blockchain;
+                    } 
+                },
+             getresult: function (){
+                if (this.view === 'result') {
+                        return this.results;
+                    } 
+             }
+            },
+            methods: {
+                
+             
+                onLoadData: function () {
+                    if (this.view === 'chain') {
+                        // Load blockchain data
+                        var vm = this
+                        this.dataLoading = true
+                        axios.get('/chain')
+                            .then(function (response) {
+                                vm.blockchain = response.data
+                                vm.dataLoading = false
+                            })
+                            .catch(function (error) {
+                                vm.dataLoading = false
+                                vm.error = 'Something went wrong.'
+                            });
+                    
+                    }
+                },
+                Cand1: function(){
+                    axios.post('/vote',{'vote':'1'})
+                    .then(response => {console.log(response)})
+                    .catch(error => {console.log(error.response)})},
+
+                Cand2: function(){
+                    axios.post('/vote',{'vote':'2'}).catch(error => {
+    console.log(error.response)})},
+
+                Cand3: function(){
+                    axios.post('/vote',{'vote':'3'}).catch(error => {
+    console.log(error.response)})},
+
+                Cand4: function(){
+                    axios.post('/vote',{'vote':'4'}).catch(error => {
+    console.log(error.response)})},
+
+                ONresult: function(){
+                    if (this.view === 'result'){
+                       var vm=this
+                       this.relcal=true
+                       axios.get('/result')
+                            .then(function (response) {
+                                vm.results = response.data
+                                vm.relcal=false
+                                //alert(JSON.stringify(vm.results))
+                            })
+                            .catch(function (error) {
+                                vm.dataLoading = false
+                                vm.error = 'Something went wrong.'
+                            });
+                    
+
+                }
+            }}
+        })
+    </script>
+</body>
+
+</html>
