@@ -155,3 +155,20 @@ class Blockchain:
         
         self.__peers.add(node)
         self.save_data()
+    
+    def count(self):
+        countd={}
+        for i in range(1,self.length):
+            if "Cand"+self.__chain[i].vote in countd:
+                countd["Cand"+self.__chain[i].vote]+=1
+            else:
+                 countd["Cand"+self.__chain[i].vote]=1
+        
+        try:
+            with open('result-{}.txt'.format(str(self.hosting_node)[:8]), mode='w') as f:
+               f.write(json.dumps(countd))
+               return countd
+        except IOError:
+            print('Saving failed!')
+           #if self.hosting_node==self.__chain[i].evm_id:
+                

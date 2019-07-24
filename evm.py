@@ -11,8 +11,8 @@ CORS(EVM)
 
 @EVM.route('/',methods=['GET'])
 def get_ui():
-    #return send_from_directory('ui','node.html')
-    response={'message':'Node alive'}
+    return send_from_directory('ui','node.html')
+    #response={'message':'Node alive'}
     return jsonify(response), 200
 
 @EVM.route('/chain',methods=['GET'])
@@ -22,12 +22,27 @@ def brodcast_chain():
     return jsonify(dict_chain), 200
 
 def start_node(port):
-    EVM.run(host='0.0.0.0',port=port,threaded=True)
+    EVM.run(host='0.0.0.0',port=port,threaded=True,debug=None)
 
 @EVM.route('/len',methods=['GET'])
 def get_chainLength():
     length=node.blockchain.length
     return jsonify(length), 200
+
+@EVM.route('/result',methods=['GET'])
+def result():
+    rel=node.blockchain.count()
+    #dict_rel=[{cand} for cand in rel]
+    return jsonify(rel), 200
+
+@EVM.route('/vote',methods=['POST'])
+def vote():
+    v=request.get_json()
+    node.blockchain.mine_block(v['vote'])
+    #print(v['vote'])
+    response = {
+            'message': 'vote get successfully'}
+    return jsonify(response), 200
 
 
 @EVM.route('/Broadcast',methods=['POST'])

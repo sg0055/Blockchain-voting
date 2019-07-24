@@ -30,6 +30,7 @@ class Node:
             print('1: Vote')
             print('2: Output the blockchain block')
             print('3: Add a Node')
+            print('4: Count')
             print('q: Quit\n')
             user_choice = self.get_user_choice()
             if user_choice == '1':
@@ -44,6 +45,8 @@ class Node:
                 self.print_blockchain_elements()
             elif user_choice == '3':
                 self.blockchain.add_peer_node(input())
+            elif user_choice == '4':
+                 self.blockchain.count()
             elif user_choice == 'q':
                 waiting_for_input = False
             else:
